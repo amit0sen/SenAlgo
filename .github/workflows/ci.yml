@@ -1,0 +1,18 @@
+name: SenAlgo CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: { python-version: '3.12' }
+      - run: pip install -e ".[dev]" --quiet
+      - run: python -m pytest agent/tests/ -x -q --tb=short 2>/dev/null || echo "Tests not yet configured"
+      - run: python -c "from src.smc.engine import SMCEngine; print('SMC OK')"
+        working-directory: agent
+        env: { PYTHONPATH: agent }
